@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 """     O objetivo deste script é remover CDS não desejadas, 
 	ao determinar quais as CDS que você deseja manter no
 	GBK. Para isso devem ser utilizados arquivos GBK full
