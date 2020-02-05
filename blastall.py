@@ -1,3 +1,4 @@
+#
 # -*- coding:utf-8 -*-
 """     Script com o proposito de realizar um blast usando varias querys e varias db
 	as databases não precisam estar formatadas, apenas precisam estar no formato
@@ -90,4 +91,3 @@ print("Foram gerados" , contador, "arquivos de resultado")
 print("Utilizando ", number_query, " querys e ", number_db,"databases")
 tempofinal = (time.time() - start_time)
 print("tempo para execucao:" "%s segundos " % (tempofinal))
-
