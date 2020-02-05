@@ -1,2 +1,2 @@
-blastall 0.8: added a counter, codding to utf-8
+blastall 0.8: added a counter, codding to utf-8, fixed error when database was alredy formated, added timer
 cds selector 0.3: codding to utf-8
