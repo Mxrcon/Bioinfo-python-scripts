@@ -1,4 +1,3 @@
-
 # -*- coding:utf-8 -*-
 """     Script com o proposito de realizar um blast usando varias querys e varias db
 	as databases não precisam estar formatadas, apenas precisam estar no formato
