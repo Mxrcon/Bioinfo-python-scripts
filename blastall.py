@@ -81,7 +81,7 @@ for i in os.listdir(query):
 	counter = counter+1
 	print ("analisandoquery: ("+str(counter)+"/"+str(number_query)+")") 
 	for db in databasefiles:
-		Blast = NcbiblastxCommandline(cmd=blast_type, query= query+"/"+i, db= database_folder+"/"+db, evalue=evalue_number, outfmt=output_format, out="outputs/resultado"+db+i)
+		Blast = NcbiblastxCommandline(cmd=blast_type, query= query+"/"+i, db= database_folder+"/"+db, evalue=evalue_number, outfmt=output_format, out="outputs/"+i+"_"+db+"_result.txt")
 		Blast()
 
 
