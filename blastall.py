@@ -9,8 +9,6 @@
 	argumento 3 = database type (nucl, prot) 
 	argumento 3 = blast type (blastn, blastp,blastx) 
 	argumento 4 = e-value 
-	argumento 1=
-
 """
 import sys
 import os
