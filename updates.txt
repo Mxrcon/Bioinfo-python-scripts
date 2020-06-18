@@ -1,3 +1,4 @@
 blastall 0.9 outputformat modified
 blastall 0.8: added a counter, codding to utf-8, fixed error when database was alredy formated, added timer
 cds selector 0.3: codding to utf-8
+cds selector 1.9: major fixes on code
