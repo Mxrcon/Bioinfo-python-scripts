@@ -15,7 +15,6 @@ where: [1] = input folder containing .gbk files and [2] = output folder where re
 
 
 """
-
 class progress_timer:
 	def __init__(self, n_iter, description=""):
 		self.n_iter = n_iter
@@ -33,38 +32,20 @@ class progress_timer:
 		self.timer.finish()
 
 
-class sequence:
-	def __init__(self,information_list,genome):
-		if "complement" in information_list[0]:
-			self.location = information_list[0].strip("     CDS             ").strip("complement(").strip(")").split("..")
-			self.seq = Seq(genome[int(int(self.location[0])-1):int(int(self.location[1]))]).reverse_complement()
-		if "complement" not in information_list[0]:
-			self.location = information_list[0].strip("     CDS             ").strip("complement(").strip(")").split("..")
-			self.seq = Seq(genome[int(int(self.location[0])-1):int(int(self.location[1]))])
-		for i in information_list[0:3]:
-			if i.split("=")[0].replace(" ","") == "/locus_tag":
-				self.id = i.split("=")[1].strip("\"").replace(" ","")
-		trans_location = []
-		counter =0
-		for i in information_list:
-			if "translation" in i:
-				trans_location.append(counter)
-			if " gene" in i or "ORIGIN " in i:
-				trans_location.append(counter)
 
-			counter+=1
-		self.translation = "".join(information_list[trans_location[0]:trans_location[1]]).replace("/translation=","").replace("\"","").replace(" ","")
-		for i in information_list[2:-2]:
-			if i.split("=")[0].replace(" ","") == "/product":
-				self.product = i.split("=")[1].strip("\"")			
-			self.cog = "-"
-			if i.split("=")[0].replace(" ","") == "/db_xref":
-				if i.split("=")[1].strip("\"").split(":")[0] == "COG":
- 					self.cog = i.split("=")[1].strip("\"").split(":")[1]
-			if self.cog != "-":
-				break
+
+
+
+class sequence:
+	def __init__(self,seq_id,seq,seq_product,seq_translation,cog):
+		self.id = seq_id
+		self.seq = seq
+		self.product =seq_product
+		self.translation = seq_translation
+		self.cog = cog
+
 def pep(sequence_list,output_folder,name):
-	records = [SeqRecord(Seq(seq.translation),id=seq.id,description="",) for seq in sequence_list]
+	records = [SeqRecord(Seq(seq.translation,),id=seq.id,description="",) for seq in sequence_list]
 	SeqIO.write(records,output_folder+"/"+name+".pep","fasta")
 
 def nuc(sequence_list,output_folder,name):
@@ -76,63 +57,44 @@ def func(sequence_list,output_folder,name):
 	function = "".join(function)
 	with open(output_folder+"/"+name+".function",'w') as output:
 		output.write(function)
-		output.close()	 
+		output.close()
 
+def open_gbk(seq_file):
+	sequence_list,id_list = [],[]
+	for seq_record in SeqIO.parse(seq_file , 'genbank'):
+		genome = seq_record.seq
+		for feature in seq_record.features:
+			if feature.type == "CDS":
+				gene = feature
+				feature_id = feature.qualifiers['locus_tag'][0]
+				feature_product = feature.qualifiers['product'][0]
+				feature_translation = feature.qualifiers['translation'][0]
+				if feature.location.strand == 1:
+					feature_sequence = genome[feature.location.start:feature.location.end]
+				if feature.location.strand == -1:
+					feature_sequence = genome[feature.location.start:feature.location.end].reverse_complement()
+				try:
+					if feature.qualifiers['db_xref'][0].split(":")[0] == "COG":
+						feature_cog = feature.qualifiers['db_xref'][0].split(":")[1]
+				except:
+					feature_cog = "-" 
+				sequence_list.append(sequence(feature_id,feature_sequence,feature_product,feature_translation,feature_cog))
 
+	return sequence_list		
 
-
-
-def open_gbk(file_input):
-	file_input = open(file_input,"r")
-	file_input = file_input.readlines()
-	counter = 0
-	information_location,cds_locations,genome_locations = [],[],[]
-	for i in file_input:
-		counter+=1
-		if "CDS" in i.split(" "):
-			cds_locations.append(file_input[counter-1].split(" ")[-1].strip().split(".."))
-			information_location.append(counter-1)
-		if i == "ORIGIN      \n":
-			genome_locations.append(counter)
-		if i == "//\n":
-			genome_locations.append(counter)
-	
-	genome = "".join(file_input[genome_locations[0]:genome_locations[1]])
-	filtered_genome = "".join(i.upper() for i in genome if i.isalpha())
-	informations = []
-	for i in range(len(information_location)):
-		if information_location[i] == information_location[-1]:
-			informations.append(file_input[information_location[i]:genome_locations[0]])
-			break
-		informations.append(file_input[information_location[i]:information_location[i+1]])
-	filtered_informations = []
-	for i in informations:
-		filtered_i = []
-		for o in i:
-			filtered_i.append(o.strip("\n"))
-		filtered_informations.append(filtered_i)
-	
-	sequence_list = [sequence(i,filtered_genome) for i in filtered_informations]
-	return sequence_list
-
-	
 def file_handler(input_file,output_folder):
 	name = input_file.split(".gb")[0].split("/")[1]
 	sequence_list = open_gbk(input_file)
 	pep(sequence_list,output_folder,name)
 	nuc(sequence_list,output_folder,name)
-	func(sequence_list,output_folder,name)
-
-###EXECUTION
-
-	
+	func(sequence_list,output_folder,name)		
 #Inputs and outputs
 input_folder = sys.argv[1]
 output_folder= sys.argv[2]
 #Output check
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
-#Running code 
+#Running code
 pt= progress_timer(description="Running",n_iter=len(os.listdir(input_folder)))
 for i in os.listdir(input_folder):
 	pt.update()
@@ -140,5 +102,6 @@ for i in os.listdir(input_folder):
 	file_handler(input_folder+"/"+i, output_folder)
 pt.finish()
 print("Done!")
+
 
 
