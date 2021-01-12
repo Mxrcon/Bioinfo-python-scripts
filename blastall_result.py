@@ -20,7 +20,7 @@ def lines_number(result_file):
 	with open(result_file, 'r') as f:
     		for line in f:
         		number = number + 1
-	return str(number) 
+	return str(number)
 
 
 #def results detector
@@ -32,10 +32,7 @@ def detect_file(txt):
 	return [query, db]
 #variables
 all_files = os.listdir(folder)
-query_list_all = []
-query_list = []
-db_list_all = []
-db_list = []
+query_list_all,query_list,db_list_all,db_list = [],[],[],[]
 #script
 for i in all_files:
 	open(folder+"/"+i)
@@ -69,7 +66,3 @@ final_file = "\n".join(final_file)
 with open(output,"w+") as F:
 	F.write(final_file)
 F.close()
-		
-	
-
-	
