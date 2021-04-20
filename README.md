@@ -1,7 +1,7 @@
 # Bio python tools
-developed by Davi M.
+developed by [Davi Marcon](https://github.com/Mxrcon)
 
-email: davijosuemarcon@gmail.com
+Email: davijosuemarcon@gmail.com
 
 
 ## About this repo:
@@ -12,4 +12,5 @@ I'm aiming on standarize these scripts to use them with Nextflow DSL, and make t
 
 * python verion > 3.6
 * python Bio package
+
 ` just that :D`
